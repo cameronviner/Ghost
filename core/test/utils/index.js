@@ -1,5 +1,4 @@
 var Promise       = require('bluebird'),
-    sequence      = require('../../server/utils/sequence'),
     _             = require('lodash'),
     fs            = require('fs-extra'),
     path          = require('path'),
@@ -8,7 +7,8 @@ var Promise       = require('bluebird'),
     Models        = require('../../server/models'),
     SettingsAPI   = require('../../server/api/settings'),
     permissions   = require('../../server/permissions'),
-    permsFixtures = require('../../server/data/fixtures/permissions/permissions.json'),
+    permsFixtures = require('../../server/data/migration/fixtures/permissions/permissions.json'),
+    sequence      = require('../../server/utils/sequence'),
     DataGenerator = require('./fixtures/data-generator'),
     filterData    = require('./fixtures/filter-param'),
     API           = require('./api'),
@@ -537,13 +537,9 @@ login = function login(request) {
                 password: user.password,
                 client_id: 'ghost-admin',
                 client_secret: 'not_available'
-            }).end(function (err, res) {
-                if (err) {
-                    return reject(err);
-                }
-
+            }).then(function then(res) {
                 resolve(res.body.access_token);
-            });
+            }, reject);
     });
 };
 
